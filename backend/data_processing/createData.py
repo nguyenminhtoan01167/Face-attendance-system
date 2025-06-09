@@ -1,87 +1,88 @@
-import cv2
-import os
 from pathlib import Path
+import cv2
 from datetime import datetime
 
-# ========== CẤU HÌNH ==========
-INPUT_FILE = Path("backend/data_processing/input_info.txt")
-VIDEO_DIR = Path("Getting_data_video")
-LOG_FILE = Path("backend/data_processing/createData.log")
 
-# ========== HÀM GHI LOG ==========
-def log(msg):
-    timestamp = datetime.now().strftime("[%d/%m/%Y %H:%M:%S]")
-    print(f"{timestamp} {msg}")
-    with open(LOG_FILE, "a", encoding="utf-8") as f:
-        f.write(f"{timestamp} {msg}\n")
+class VideoProcessor:
+    def __init__(self, input_file="backend/data_processing/input_info.txt", log_dir="backend/data_processing/logs"):
+        self.input_file = Path(input_file)
+        self.log_dir = Path(log_dir)
+        self.log_dir.mkdir(parents=True, exist_ok=True)
 
-# ========== HÀM ĐỌC INPUT ==========
-def read_input_file():
-    if not INPUT_FILE.exists():
-        log("❌ Không tìm thấy file input_info.txt.")
-        return None, None, None
+        self.student_id = None
+        self.student_name = None
+        self.video_path = None
+        self.cap = None
+        self.log_file = None
 
-    with open(INPUT_FILE, "r", encoding="utf-8") as f:
-        line = f.readline().strip()
-        try:
-            id_sv, ten_sv, video_path = line.split(";")
-            return id_sv.strip(), ten_sv.strip(), video_path.strip()
-        except ValueError:
-            log("❌ Dữ liệu trong input_info.txt phải có dạng: id;ten;path_video")
-            return None, None, None
+    def log(self, message):
+        timestamp = datetime.now().strftime("[%d/%m/%Y %H:%M:%S]")
+        print(f"{timestamp} {message}")
+        if self.log_file:
+            with open(self.log_file, "a", encoding="utf-8") as f:
+                f.write(f"{timestamp} {message}\n")
 
-# ========== HÀM KIỂM TRA VIDEO ==========
-def validate_video(path):
-    if not os.path.exists(path):
-        log(f"❌ Video không tồn tại: {path}")
-        return False
+    def read_input(self):
+        if not self.input_file.exists():
+            self.log("❌ Không tìm thấy file input_info.txt")
+            return False
 
-    cap = cv2.VideoCapture(path)
-    if not cap.isOpened():
-        log(f"❌ Không thể mở video: {path}")
-        return False
-    cap.release()
-    return True
+        with open(self.input_file, "r", encoding="utf-8") as f:
+            line = f.readline().strip()
+            try:
+                self.student_id, self.student_name, self.video_path = map(str.strip, line.split(";"))
+            except ValueError:
+                self.log("❌ Định dạng file input_info.txt phải là: ID;Tên;Đường_dẫn_video")
+                return False
 
-# ========== HÀM XEM VIDEO VÀ ĐỌC FRAME ==========
-def preview_video(path):
-    cap = cv2.VideoCapture(path)
-    frame_count = 0
-    log("▶️ Đang đọc video... Nhấn ESC để dừng xem sớm.")
+        self.log_file = self.log_dir / f"{self.student_id}.log"
+        self.log(f"📥 Nhận thông tin: ID={self.student_id}, Tên={self.student_name}, Video={self.video_path}")
+        return True
 
-    while True:
-        ret, frame = cap.read()
-        if not ret:
-            log("📉 Hết video hoặc không đọc được frame.")
-            break
+    def validate_video(self):
+        if not Path(self.video_path).exists():
+            self.log(f"❌ Video không tồn tại: {self.video_path}")
+            return False
 
-        frame_count += 1
-        cv2.imshow("Preview Video", frame)
+        self.cap = cv2.VideoCapture(self.video_path)
+        if not self.cap.isOpened():
+            self.log("❌ Không thể mở video. Có thể lỗi codec hoặc sai định dạng.")
+            return False
 
-        if cv2.waitKey(1) & 0xFF == 27:  # ESC
-            log("🛑 Người dùng dừng sớm.")
-            break
+        self.log("✅ Đã mở video thành công.")
+        return True
 
-    cap.release()
-    cv2.destroyAllWindows()
-    log(f"✅ Tổng số frame đã đọc: {frame_count}")
+    def read_frames(self):
+        frame_count = 0
+        self.log("▶️ Đang đọc từng frame. Nhấn ESC để dừng sớm.")
 
-# ========== MAIN ==========
-def main():
-    log("======== BẮT ĐẦU createData.py ========")
+        while True:
+            ret, frame = self.cap.read()
+            if not ret:
+                self.log("📉 Kết thúc video hoặc không đọc được frame.")
+                break
 
-    id_sv, ten_sv, video_path = read_input_file()
-    if not all([id_sv, ten_sv, video_path]):
-        return
+            frame_count += 1
+            cv2.imshow("Xem trước video", frame)
 
-    log(f"📥 Nhận input: ID={id_sv}, Tên={ten_sv}, Video={video_path}")
+            if cv2.waitKey(1) & 0xFF == 27:  # ESC
+                self.log("🛑 Người dùng đã dừng sớm bằng phím ESC.")
+                break
 
-    if not validate_video(video_path):
-        return
+        self.cap.release()
+        cv2.destroyAllWindows()
+        self.log(f"✅ Đã đọc {frame_count} frames.")
 
-    preview_video(video_path)
+    def run(self):
+        self.log("========== BẮT ĐẦU XỬ LÝ VIDEO ==========")
+        if not self.read_input():
+            return
+        if not self.validate_video():
+            return
+        self.read_frames()
+        self.log("========== KẾT THÚC ==========\n")
 
-    log("======== KẾT THÚC createData.py ========\n")
 
 if __name__ == "__main__":
-    main()
+    processor = VideoProcessor()
+    processor.run()
