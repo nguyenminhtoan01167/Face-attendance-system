@@ -1,2 +1,16 @@
 [09/06/2025 09:20:55] 📥 Nhận thông tin: ID=12345678, Tên=Nguyen Van A, Video=Getting_data_video/12345678_NguyenVanA.mp4
 [09/06/2025 09:20:55] ❌ Video không tồn tại: Getting_data_video/12345678_NguyenVanA.mp4
+[09/06/2025 09:37:01] 📥 Nhận thông tin: ID=12345678, Tên=Nguyen Van A, Video=Getting_data_video/12345678_NguyenVanA.mp4
+[09/06/2025 09:37:01] ❌ Video không tồn tại: Getting_data_video/12345678_NguyenVanA.mp4
+[13/06/2025 10:12:30] 📥 Nhận thông tin: ID=12345678, Tên=Nguyen Van A, Video=Getting_data_video/12345678_NguyenVanA.mp4
+[13/06/2025 10:12:30] ❌ Video không tồn tại: Getting_data_video/12345678_NguyenVanA.mp4
+[13/06/2025 10:22:35] 📥 Nhận thông tin: ID=12345678, Tên=Nguyen Van A, Video=Getting_data_video/12345678_NguyenVanA.mp4
+[13/06/2025 10:22:35] ❌ Video không tồn tại: Getting_data_video/12345678_NguyenVanA.mp4
+[13/06/2025 10:49:03] ✅ Tạo thư mục 12345678_Nguyen Van A thành công.
+[13/06/2025 10:49:03] ❌ Đã xảy ra lỗi khi sao chép video: [Errno 2] No such file or directory: 'Getting_data_video/12345678_NguyenVanA.mp4'
+[13/06/2025 10:50:13] ❌ Thư mục 12345678_Nguyen Van A đã tồn tại.
+[13/06/2025 10:50:13] ❌ Đã xảy ra lỗi khi sao chép video: [Errno 2] No such file or directory: 'Getting_data_video/12345678_NguyenVanA.mp4'
+[13/06/2025 11:36:43] ✅ Tạo thư mục 12345678_Nguyễn Văn A thành công.
+[13/06/2025 11:36:43] ❌ Đã xảy ra lỗi khi sao chép video: [Errno 2] No such file or directory: 'Getting_data_video/12345678_NguyenVanA/12345678_NguyenVanA.mp4'
+[13/06/2025 11:41:13] ❌ Thư mục 12345678_Nguyễn Văn A đã tồn tại, bỏ qua video.
+[13/06/2025 11:42:11] ❌ Thư mục 12345678_Nguyễn Văn A đã tồn tại, bỏ qua video.
